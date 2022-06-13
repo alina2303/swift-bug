@@ -24,9 +24,6 @@ class LoopingPlayerUIView: UIView {
     private let playerLayer = AVPlayerLayer()
     private var playerLooper: AVPlayerLooper?
 
-
-
-
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -34,11 +31,8 @@ class LoopingPlayerUIView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        // Load the resource
-        
         let fileUrl = Bundle.main.url(forResource: "butterfly", withExtension: "mp4")!
-//        let fileUrl = Bundle.main.url(forResource: "republica_showreel2", withExtension: "mp4")!
-        
+
         let asset = AVAsset(url: fileUrl)
         let item = AVPlayerItem(asset: asset)
 
@@ -47,17 +41,19 @@ class LoopingPlayerUIView: UIView {
         playerLayer.player = player
         playerLayer.videoGravity = .resizeAspectFill
         layer.addSublayer(playerLayer)
-
-
         
         // Create a new player looper with the queue player and template item
         playerLooper = AVPlayerLooper(player: player, templateItem: item)
 
-        
         // Start the movie
-        
         player.play()
         player.isMuted = true
+
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidActivate), name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
+
+    @objc func appDidActivate() {
+        playerLayer.player?.play()
     }
     
     override func layoutSubviews() {
